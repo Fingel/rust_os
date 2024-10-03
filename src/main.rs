@@ -6,6 +6,7 @@
 
 use blog_os::println;
 use core::panic::PanicInfo;
+use x86_64::registers::control::Cr3;
 
 #[no_mangle] // don't mangle the name of this function
 pub extern "C" fn _start() -> ! {
@@ -13,6 +14,12 @@ pub extern "C" fn _start() -> ! {
     // named `_start` by default
     println!("Hello from println! {}", 42);
     blog_os::init();
+
+    let (level_4_page_table, _) = Cr3::read();
+    println!(
+        "Level 4 page table at: {:?}",
+        level_4_page_table.start_address()
+    );
 
     #[cfg(test)]
     test_main();
